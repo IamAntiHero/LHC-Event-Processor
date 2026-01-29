@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: lhc-postgres
+    environment:
+      POSTGRES_DB: lhc_events
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - lhc-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lhc-app
+    environment:
+      JDBC_URL: jdbc:postgresql://postgres:5432/lhc_events
+      JDBC_USER: ${JDBC_USER:-postgres}
+      JDBC_PASSWORD: ${JDBC_PASSWORD:-password}
+      SPRING_JPA_HIBERNATE_DDL-AUTO: none
+      SPRING_JPA_SHOW-SQL: "false"
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - lhc-network
+    restart: unless-stopped
+
+networks:
+  lhc-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
