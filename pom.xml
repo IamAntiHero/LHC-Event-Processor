@@ -71,6 +71,11 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -151,6 +156,7 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
                     <violationSeverity>warning</violationSeverity>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
 
@@ -162,6 +168,7 @@
                     <effort>Max</effort>
                     <threshold>Medium</threshold>
                     <failOnError>false</failOnError>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

@@ -2,6 +2,7 @@ package com.hussam.lhc.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hussam.lhc.database.DatabaseManager;
 import com.hussam.lhc.model.ParticleEvent;
 import com.hussam.lhc.model.ParticleType;
 import org.junit.jupiter.api.AfterEach;
