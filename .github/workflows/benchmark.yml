@@ -1,0 +1,57 @@
+name: Performance Benchmarks
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: Run Performance Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: lhc_events
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build application
+        run: mvn clean package -DskipTests -B
+
+      - name: Run benchmarks
+        env:
+          JDBC_URL: jdbc:postgresql://localhost:5432/lhc_events
+          JDBC_USER: postgres
+          JDBC_PASSWORD: password
+        run: |
+          echo "Running performance benchmarks..."
+          mvn test -Dtest=BenchmarkTest -B
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            target/benchmark-results.txt
+            target/benchmark-summary.json
