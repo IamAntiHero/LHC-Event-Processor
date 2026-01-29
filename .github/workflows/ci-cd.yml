@@ -51,6 +51,12 @@ jobs:
         JDBC_USER: postgres
         JDBC_PASSWORD: password
 
+    - name: Run Checkstyle
+      run: mvn checkstyle:check -B || echo "Checkstyle warnings found"
+
+    - name: Run SpotBugs
+      run: mvn spotbugs:check -B || echo "SpotBugs warnings found"
+
     - name: Generate Test Coverage
       run: mvn jacoco:report
 
@@ -66,6 +72,16 @@ jobs:
       with:
         name: lhc-event-processor-jar
         path: target/*.jar
+
+    - name: Upload Code Quality Reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: code-quality-reports
+        path: |
+          target/checkstyle-result.xml
+          target/spotbugsXml.xml
+          target/site/jacoco/
 
   integration-tests:
     runs-on: ubuntu-latest
