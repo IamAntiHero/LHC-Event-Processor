@@ -126,7 +126,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
 
@@ -139,7 +139,7 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
                     <violationSeverity>warning</violationSeverity>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
 
@@ -151,7 +151,7 @@
                     <effort>Max</effort>
                     <threshold>Medium</threshold>
                     <failOnError>false</failOnError>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>

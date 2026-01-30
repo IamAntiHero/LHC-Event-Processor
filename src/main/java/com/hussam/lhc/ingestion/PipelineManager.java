@@ -57,6 +57,22 @@ public class PipelineManager {
     }
 
     /**
+     * Constructs a PipelineManager with the specified configuration and custom database manager.
+     *
+     * @param producerThreads the number of producer threads
+     * @param consumerThreads the number of consumer threads
+     * @param queueCapacity the capacity of the event queue
+     * @param dbManager the database manager to use
+     */
+    public PipelineManager(int producerThreads, int consumerThreads, int queueCapacity, DatabaseManager dbManager) {
+        this.producerThreads = producerThreads;
+        this.consumerThreads = consumerThreads;
+        this.queueCapacity = queueCapacity;
+        this.dbManager = dbManager;
+        this.isRunning = false;
+    }
+
+    /**
      * Constructs a PipelineManager with default configuration.
      */
     public PipelineManager() {
@@ -88,7 +104,9 @@ public class PipelineManager {
         poisonPill = new PoisonPill();
         // Use ArrayBlockingQueue for bounded capacity and thread-safe operations.
         eventQueue = new ArrayBlockingQueue<>(queueCapacity);
-        dbManager = DatabaseManager.getInstance();
+        if (dbManager == null) {
+            dbManager = DatabaseManager.getInstance();
+        }
 
         // Create fixed-size thread pools to control resource usage.
         // Non-daemon threads ensure clean shutdown before JVM exit.

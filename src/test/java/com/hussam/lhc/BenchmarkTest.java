@@ -360,7 +360,8 @@ public class BenchmarkTest {
         ScheduledExecutorService monitorExecutor = null;
 
         try {
-            PipelineManager manager = new PipelineManager(producerThreads, consumerThreads, queueCapacity, DatabaseManager.getInstance());
+            com.hussam.lhc.UnifiedTestConfig.InMemoryTestDatabase testDbManager = new com.hussam.lhc.UnifiedTestConfig.InMemoryTestDatabase();
+            PipelineManager manager = new PipelineManager(producerThreads, consumerThreads, queueCapacity, testDbManager);
 
             monitorExecutor = Executors.newSingleThreadScheduledExecutor();
             queueMonitor = new QueueMonitor(manager, maxQueueSizeObserved);
